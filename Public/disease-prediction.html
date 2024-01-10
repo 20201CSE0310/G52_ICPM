@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Prediction - KrushiSeva</title>
+    <style>
+        body {
+            background: url('image3.jpeg') center/cover;
+            background-size: cover;
+            font-family: 'Arial', sans-serif;
+            color: #000000;
+            margin: 0;
+            /* padding: 20px; */
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+    
+        header {
+            background-color: #4CAF50;
+            padding-top: 1em;
+            padding-bottom: 1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            width: 100%;
+        }
+    
+        header h1 {
+            margin: 0;
+        }
+        header h1 {
+            color: white;
+            margin: 0;
+        }
+
+
+        #predictionResult,
+        #treatmentSteps {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input {
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+        #predictionResult {
+            font-weight: bold;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+            width: 100%;
+            margin-top: auto; 
+        }
+
+        .content-box {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+    
+        .nav-links li {
+            margin-left: 20px;
+        }
+    
+        .nav-links a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+        }
+    
+        .menu-icon {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: white;
+        }
+    
+        @media screen and (max-width: 768px) {
+            .menu-icon {
+                display: block;
+            }
+    
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                background-color: #4CAF50;
+                width: 100%;
+            }
+    
+            .nav-links.show {
+                display: flex;
+            }
+    
+            .nav-links li {
+                margin: 10px 0;
+            }
+            
+        }
+    </style>
+</head>
+
+<body>
+
+      
+    <header>
+        <h1>Disease Prediction - KrushiSeva</h1>
+        <div class="menu-icon" onclick="toggleMenu()"></div>
+        <ul class="nav-links">
+            <li><a href="index.html">Welcome</a></li>
+            <li><a href="HomeScreen.html">Home</a></li>
+        </ul>
+    </header>
+
+
+    <div class="content-box">
+        <input type="file" name="file" id="fileInput" />
+        <button type="button" onclick="uploadImage()">Upload</button>
+        <div id="predictionResult"></div>
+        <div id="treatmentSteps"></div>
+    </div>
+
+    <footer>
+        <p>Contact Us: 9123456789</p>
+        <p>&copy; 2023 KrushiSeva. All rights reserved.</p>
+    </footer>
+
+    <script>
+       
+            const treatment_steps = {
+    'pepperbellbacterialspot': {
+        'prevention': ['Use disease-resistant pepper varieties', 'Rotate crops', 'Provide adequate spacing', 'Avoid overhead irrigation'],
+        'treatment': ['Copper-based sprays', 'Remove and destroy infected plant parts', 'Apply bactericides']
+    },
+    'potatolateblight': {
+        'prevention': ['Choose resistant potato varieties', 'Practice crop rotation', 'Apply fungicides preventively'],
+        'treatment': ['Fungicides containing copper or other effective compounds', 'Remove and destroy infected plant material']
+    },
+    'tomatohealthy': {
+        'prevention': ['Follow good cultural practices', 'Monitor for signs of diseases and pests regularly'],
+        'treatment': ['Maintain plant health', 'Remove infected plants promptly']
+    },
+    'tomatoleafmold': {
+        'prevention': ['Provide good air circulation', 'Water at the base', 'Apply fungicides preventively'],
+        'treatment': ['Fungicides containing copper or other effective compounds', 'Remove and destroy infected leaves']
+    },
+    'pepperbellhealthy': {
+        'prevention': [],
+        'treatment': []
+    },
+    'tomatoseptorialeafspot': {
+        'prevention': ['Crop rotation', 'Plant in well-drained soil', 'Apply fungicides preventively'],
+        'treatment': ['Fungicides containing copper or other effective compounds', 'Remove and destroy infected leaves']
+    },
+    'tomatospidermitestwospottedspidermite': {
+        'prevention': ['Regularly spray plants with water', 'Use predatory mites for biological control'],
+        'treatment': ['Insecticidal soaps or miticides', 'Maintain a humid environment']
+    },
+    'tomatoearlyblight': {
+        'prevention': ['Crop rotation', 'Proper spacing for air circulation', 'Apply fungicides preventively'],
+        'treatment': ['Fungicides containing copper or other effective compounds', 'Remove and destroy infected leaves']
+    },
+    'tomatolateblight': {
+        'prevention': ['Choose resistant tomato varieties', 'Apply fungicides preventively'],
+        'treatment': ['Fungicides containing copper or other effective compounds', 'Remove and destroy infected plant material']
+    },
+    'tomatotomatomosaicvirus': {
+        'prevention': ['Use disease-free seeds and plants', 'Control aphids'],
+        'treatment': ['Remove and destroy infected plants', 'Control aphids']
+    },
+    'potatoearlyblight': {
+        'prevention': ['Crop rotation', 'Proper plant spacing', 'Apply fungicides preventively'],
+        'treatment': ['Fungicides containing copper or other effective compounds', 'Remove and destroy infected leaves']
+    },
+    'tomatotomatoyellowleafcurlvirus': {
+        'prevention': ['Use virus-resistant tomato varieties', 'Control whiteflies'],
+        'treatment': ['Remove and destroy infected plants', 'Control whiteflies']
+    },
+    'potatohealthy': {
+        'prevention': [],
+        'treatment': []
+    },
+    'tomatotargetspot': {
+        'prevention': ['Crop rotation', 'Proper plant spacing', 'Apply fungicides preventively'],
+        'treatment': ['Fungicides containing copper or other effective compounds', 'Remove and destroy infected leaves']
+    },
+    'tomatobacterialspot': {
+        'prevention': ['Crop rotation', 'Proper plant spacing', 'Avoid overhead irrigation'],
+        'treatment': ['Copper-based sprays', 'Remove and destroy infected plant parts', 'Apply bactericides']
+    }
+
+};
+
+function uploadImage() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select an image file');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                const prediction = data.prediction.trim().toLowerCase();
+ 
+                console.log('Prediction:', prediction);
+                displayPrediction(prediction);
+                displayTreatmentSteps(prediction);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('predictionResult').innerText = 'Error predicting';
+            });
+        }
+
+        function displayPrediction(prediction) {
+    const predictionResult = document.getElementById('predictionResult');
+    predictionResult.innerText = 'Prediction: ' + prediction;
+
+    const lastWord = extractLastWord(prediction);
+    displayTreatmentSteps(lastWord);
+}
+
+function extractLastWord(prediction) {
+   
+    const words = prediction.split(/\s+/);
+
+
+    const lastWord = words[words.length - 1].replace(/[^a-zA-Z]/g, '');
+
+    return lastWord;
+}
+
+function displayTreatmentSteps(lastWord) {
+    const treatmentSteps = document.getElementById('treatmentSteps');
+
+
+    const correctedPrediction = lastWord.toLowerCase().replace(/_/g, '');
+
+    const allDiseaseKeys = Object.keys(treatment_steps).map(key => key.toLowerCase().replace(/_/g, ''));
+
+    const matchingKey = allDiseaseKeys.find(key => key === correctedPrediction);
+
+    if (matchingKey !== undefined) {
+        const diseaseTreatment = treatment_steps[matchingKey];
+
+        if (diseaseTreatment && 'treatment' in diseaseTreatment && diseaseTreatment['treatment'].length > 0) {
+           
+            treatmentSteps.innerHTML = '<h3>Treatment Steps:</h3><ul>' +
+                diseaseTreatment['treatment'].map(step => '<li>' + step + '</li>').join('') +
+                '</ul>';
+        } else if (diseaseTreatment && 'treatment' in diseaseTreatment && diseaseTreatment['treatment'].length === 0) {
+            
+            treatmentSteps.innerHTML = '<p>No specific treatment steps available for this prediction, but general guidance may apply.</p>';
+        } else {
+           
+            treatmentSteps.innerHTML = '<p>No treatment information available for this prediction.</p>';
+        }
+    } else {
+        console.log('No matching key found for the prediction:', correctedPrediction);
+       
+    }
+}
+</script>
+</body>
+
+</html>

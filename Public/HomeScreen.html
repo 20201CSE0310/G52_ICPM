@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KrushiSeva</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('image2.jpeg') center/cover; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh; 
+        }
+
+        header {
+        background-color: #4CAF50;
+        padding: 1em;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+        width: 100%;
+    }
+
+    header h1 {
+        margin: 0;
+    }
+    section {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9); 
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        header h1 {
+            color: white;
+            margin: 0;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        h2 {
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+            width: 100%;
+            margin-top: auto; 
+        }
+    .nav-links {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+    }
+
+    .nav-links li {
+        margin-left: 20px;
+    }
+
+    .nav-links a {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+    }
+
+    .menu-icon {
+        display: none;
+        cursor: pointer;
+        font-size: 1.5em;
+        color: white;
+    }
+
+    @media screen and (max-width: 768px) {
+        .menu-icon {
+            display: block;
+        }
+
+        .nav-links {
+            display: none;
+            flex-direction: column;
+            position: absolute;
+            top: 70px;
+            left: 0;
+            background-color: #4CAF50;
+            width: 100%;
+        }
+
+        .nav-links.show {
+            display: flex;
+        }
+
+        .nav-links li {
+            margin: 10px 0;
+        }
+    }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Weather Details</h1>
+        <div class="menu-icon" onclick="toggleMenu()">☰</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Welcome</a></li>
+            <li><a href="disease-prediction.html">Disease Prediction</a></li>
+        </ul>
+    </header>
+
+    <section>
+        <h2>Weather Details</h2>
+        <div id="weatherDetails"></div>
+        <button onclick="navigateToDiseasePrediction()">Disease Prediction</button>
+    </section>
+
+    <footer>
+        <p>Contact Us: 9123456789</p>
+        <p>&copy; 2023 KrushiSeva. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function getWeather() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    const apiKey = 'c77eebb496f39fe38258a157a57eb36c';
+                    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${apiKey}`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const weatherDetails = document.getElementById('weatherDetails');
+                    const minTemp = Math.round(data.main.temp_min - 273.15);
+                    const maxTemp = Math.round(data.main.temp_max - 273.15);
+                    const humidity = data.main.humidity;
+                    const weatherCondition = data.weather[0].description;
+
+                    weatherDetails.innerHTML = `<p>Location: ${data.name}</p>
+                        <p>Temperature: ${minTemp}°C - ${maxTemp}°C</p>
+                        <p>Humidity: ${humidity}%</p>
+                        <p>Weather Condition: ${weatherCondition}</p>`;
+                })
+                .catch(error => console.error('Error fetching weather data:', error));
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+
+        function navigateToDiseasePrediction() {
+            window.location.href = 'disease-prediction.html';
+        }
+
+        window.onload = getWeather;
+    </script>
+
+</body>
+
+</html>
